@@ -1,44 +1,45 @@
 'use babel';
 
+import { internalToDisplay } from './format';
 import { getLoadedThemeDisplayNames, getThemesByMode } from './themes';
 import { remote } from 'electron';
 
 const { nativeTheme } = remote;
 module.exports = {};
 
-getLoadedThemeDisplayNames().then(([uiThemes, previewThemes, syntaxThemes]) => {
+getLoadedThemeDisplayNames().then(([uiThemes, syntaxThemes, previewThemes]) => {
   module.exports.config = {
-    lightUiTheme: {
+    lightUi: {
       title: 'Light UI Theme',
       type: 'string',
       default: 'Default Light UI',
       enum: uiThemes,
     },
-    lightSyntaxTheme: {
+    lightSyntax: {
       title: 'Light Syntax Theme',
       type: 'string',
       default: 'Default Light Syntax',
       enum: syntaxThemes,
     },
-    lightPreviewTheme: {
+    lightPreview: {
       title: 'Light Preview Theme',
       type: 'string',
       default: 'GitHub Preview',
       enum: previewThemes,
     },
-    darkUiTheme: {
+    darkUi: {
       title: 'Dark UI Theme',
       type: 'string',
       default: 'Default Dark UI',
       enum: uiThemes,
     },
-    darkSyntaxTheme: {
+    darkSyntax: {
       title: 'Dark Syntax Theme',
       type: 'string',
       default: 'Default Dark Syntax',
       enum: syntaxThemes,
     },
-    darkPreviewTheme: {
+    darkPreview: {
       title: 'Dark Preview Theme',
       type: 'string',
       default: 'GitHub Preview',
@@ -47,10 +48,9 @@ getLoadedThemeDisplayNames().then(([uiThemes, previewThemes, syntaxThemes]) => {
   };
 
   module.exports.activate = () => {
-    const lightThemes = getThemesByMode('light');
-    const darkThemes = getThemesByMode('dark');
-
     function switchTheme() {
+      const lightThemes = getThemesByMode('light');
+      const darkThemes = getThemesByMode('dark');
       if (nativeTheme.shouldUseDarkColors) {
         inkdrop.config.set('core.themes', darkThemes);
       } else {
@@ -60,10 +60,49 @@ getLoadedThemeDisplayNames().then(([uiThemes, previewThemes, syntaxThemes]) => {
 
     // Switch the theme when Inkdrop is launched
     switchTheme();
-
     // Listen for the system's dark mode setting event
     nativeTheme.on('updated', () => {
       switchTheme();
+    });
+
+    // When the plugin config is changed reflect it
+    inkdrop.config.onDidChange(
+      'auto-switch-themes',
+      ({ newValue, oldValue }) => {
+        switchTheme();
+      }
+    );
+
+    function setPluginConfigFromGlobal(newTheme: string, mode: Mode): void {
+      if (newTheme.match(/^.+\-(ui)$/)) {
+        inkdrop.config.set(
+          'auto-switch-themes.' + mode + 'Ui',
+          internalToDisplay(newTheme)
+        );
+      }
+      if (newTheme.match(/^.+\-(syntax)$/)) {
+        inkdrop.config.set(
+          'auto-switch-themes.' + mode + 'Syntax',
+          internalToDisplay(newTheme)
+        );
+      }
+      if (newTheme.match(/^.+\-(preview)$/)) {
+        inkdrop.config.set(
+          'auto-switch-themes.' + mode + 'Preview',
+          internalToDisplay(newTheme)
+        );
+      }
+    }
+
+    // When the theme is changed from 'Preferences > Themes',
+    // also change the plugin config
+    inkdrop.config.onDidChange('core.themes', ({ newValue, oldValue }) => {
+      const newTheme: string = newValue[2];
+      if (nativeTheme.shouldUseDarkColors) {
+        setPluginConfigFromGlobal(newTheme, 'dark');
+      } else {
+        setPluginConfigFromGlobal(newTheme, 'light');
+      }
     });
   };
 });
