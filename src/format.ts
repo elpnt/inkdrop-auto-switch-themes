@@ -13,7 +13,7 @@ function capitalize(s: string): string {
  * eg: 'default-light-syntax' -> 'Default Light Syntax'
  *
  */
-export function internalToDisplay(s: string) {
+export function internalToDisplay(s: string): string {
   return s
     .split('-')
     .map((e: string) => capitalize(e))

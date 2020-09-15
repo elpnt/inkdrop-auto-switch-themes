@@ -12,7 +12,7 @@ export function getThemesByMode(mode: Mode): string[] {
 }
 
 export async function getLoadedThemeDisplayNames(): Promise<string[][]> {
-  let themes: string[];
+  let themes: string[] = [];
   let uiThemes: string[] = [];
   let previewThemes: string[] = [];
   let syntaxThemes: string[] = [];
