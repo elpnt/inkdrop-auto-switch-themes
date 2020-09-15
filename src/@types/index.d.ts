@@ -1,0 +1,1 @@
+type Mode = 'light' | 'dark';

@@ -1,48 +1,13 @@
-'use strict';
 'use babel';
 
-import { capitalize, displayToInternal, internalToDisplay } from './format';
+import { getLoadedThemeDisplayNames, getThemesByMode } from './themes';
+import { remote } from 'electron';
 
-let themes: string[];
-let uiThemes: string[] = [];
-let previewThemes: string[] = [];
-let syntaxThemes: string[] = [];
-
-async function getThemes() {
-  const themeManager = await inkdrop.themes;
-  console.log(themeManager.getLoadedThemes());
-  themes = themeManager.getLoadedThemeNames();
-
-  uiThemes = themes
-    .filter((e) => {
-      return e.match(/^.+\-(ui)$/);
-    })
-    .map((e) => displayToInternal(e));
-  previewThemes = themes
-    .filter((e) => {
-      return e.match(/^.+\-(preview)$/);
-    })
-    .map((e) => displayToInternal(e));
-  syntaxThemes = themes
-    .filter((e) => {
-      return e.match(/^.+\-(syntax)$/);
-    })
-    .map((e) => displayToInternal(e));
-}
-
+const { nativeTheme } = remote;
 module.exports = {};
-getThemes().then(() => {
+
+getLoadedThemeDisplayNames().then(([uiThemes, previewThemes, syntaxThemes]) => {
   module.exports.config = {
-    startLight: {
-      title: 'Start time of the light theme (HH:MM format)',
-      type: 'string',
-      default: '07:00',
-    },
-    startDark: {
-      title: 'Start time of the dark theme (HH:MM format)',
-      type: 'string',
-      default: '18:00',
-    },
     lightUiTheme: {
       title: 'Light UI Theme',
       type: 'string',
@@ -82,9 +47,23 @@ getThemes().then(() => {
   };
 
   module.exports.activate = () => {
-    console.log(themes);
-    console.log(uiThemes);
-    console.log(previewThemes);
-    console.log(syntaxThemes);
+    const lightThemes = getThemesByMode('light');
+    const darkThemes = getThemesByMode('dark');
+
+    function switchTheme() {
+      if (nativeTheme.shouldUseDarkColors) {
+        inkdrop.config.set('core.themes', darkThemes);
+      } else {
+        inkdrop.config.set('core.themes', lightThemes);
+      }
+    }
+
+    // Switch the theme when Inkdrop is launched
+    switchTheme();
+
+    // Listen for the system's dark mode setting event
+    nativeTheme.on('updated', () => {
+      switchTheme();
+    });
   };
 });

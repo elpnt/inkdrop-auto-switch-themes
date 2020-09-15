@@ -7,18 +7,28 @@ function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-function displayToInternal(s: string) {
+/**
+ *
+ * Convert the Inkdrop internal theme name to the display name
+ * eg: 'default-light-syntax' -> 'Default Light Syntax'
+ *
+ */
+export function internalToDisplay(s: string) {
   return s
     .split('-')
     .map((e: string) => capitalize(e))
     .join(' ');
 }
 
-function internalToDisplay(s: string): string {
+/**
+ *
+ * Convert the Inkdrop display theme name to the display name
+ * eg: 'Default Light Syntax' -> 'default-light-syntax'
+ *
+ */
+export function displayToInternal(s: string): string {
   return s
     .split(' ')
     .map((e: string) => e.toLowerCase())
     .join('-');
 }
-
-export { capitalize, displayToInternal, internalToDisplay };
