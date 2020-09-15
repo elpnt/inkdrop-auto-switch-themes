@@ -1,4 +1,6 @@
-# Auto-switch-themes
+# auto-switch-themes
+![Inkdrop Plugin Version](https://inkdrop-plugin-badge.vercel.app/api/version/auto-switch-themes&style=flat)
+![Inkdrop Plugin Downloads](https://inkdrop-plugin-badge.vercel.app/api/downloads/auto-switch-themes&style=flat)
 
 ![demo](./img/demo.gif)
 

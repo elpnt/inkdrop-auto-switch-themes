@@ -2,7 +2,7 @@
   "name": "auto-switch-themes",
   "main": "./lib/index",
   "version": "0.1.0",
-  "description": "Change the theme based on the time of day",
+  "description": "Switch the Inkdrop themes automatically based on the system light/dark mode",
   "keywords": [],
   "repository": "https://github.com/elpnt/inkdrop-auto-switch-themes",
   "license": "MIT",
