@@ -1,7 +1,7 @@
 {
   "name": "auto-switch-themes",
   "main": "./lib/index",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Change the theme based on the time of day",
   "keywords": [],
   "repository": "https://github.com/elpnt/inkdrop-auto-switch-themes",
