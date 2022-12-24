@@ -1,0 +1,17 @@
+{
+  "jsc": {
+    "parser": {
+      "syntax": "ecmascript"
+    },
+    "target": "es2020"
+  },
+  "minify": true,
+  "module": {
+    "type": "commonjs"
+  },
+  "env": {
+    "targets": {
+      "electron": "21"
+    }
+  }
+}
